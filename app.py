@@ -1,5 +1,5 @@
 import streamlit as st
-
+from db_c import conn,cursor
 st.title("Media Platform")
 
 login,signup = st.tabs(
@@ -24,3 +24,16 @@ with signup:
         password = st.text_input("Password", type="password")
 
         btn = st.form_submit_button("SignUp")
+
+        if btn:
+          query = """
+          INSERT INTO users(name,email,password)
+          VALUES(%s,%s,%s) """
+          values = (name,email,password)
+          cursor.execute(query,values)
+          conn.commit()
+          st.success("User Registered Successfully")
+          cursor.execute("SELECT * FROM users")
+          data = cursor.fetchall()
+          st.write(data)
+           
