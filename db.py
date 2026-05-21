@@ -1,29 +1,31 @@
-import mysql.connector 
-import streamlit as st 
+import mysql.connector
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 
-conn = mysql.connector.connect(
-    host=st.secrets["host"],
-    port=st.secrets["port"],
-    user=st.secrets["user"],
-    password=st.secrets["password"],
-    database=st.secrets["database"]
+conn_obj = mysql.connector.connect(
+    host=os.getenv("DB_HOST"),
+    port=os.getenv("DB_PORT"),
+    user=os.getenv("DB_USER"),
+    password=os.getenv("DB_PASSWORD"),
+    database=os.getenv("DB_NAME")
 )
 
-cursor=conn.cursor(dictionary=True) # 
+cursor_obj = conn_obj.cursor(dictionary=True)
 
 # USERS TABLE
-cursor.execute("""
+cursor_obj.execute("""
 CREATE TABLE IF NOT EXISTS users(
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100),
     email VARCHAR(100) UNIQUE,
-    password VARCHAR(100)
+    password VARCHAR(255)
 )
 """)
 
 # FILES TABLE
-cursor.execute("""
+cursor_obj.execute("""
 CREATE TABLE IF NOT EXISTS files(
     id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT,
@@ -35,5 +37,4 @@ CREATE TABLE IF NOT EXISTS files(
 )
 """)
 
-conn.commit()
-
+conn_obj.commit()
